@@ -1,7 +1,6 @@
 # scraper.py - 
 
 import sys
-import requests
 from bs4 import BeautifulSoup
 import time
 import re
@@ -13,19 +12,6 @@ class Scraper:
     
     def __init__(self):
         self.n_of_accounts = 0
-        
-    # Requests and returns html from a webpage 
-    def requestWebpage(self, url):
-        print('Requesting webpage...')
-
-        res = requests.get(url)
-        try:
-            res.raise_for_status()
-            res.status_code == requests.codes.ok
-        except Exception as ex:
-            print('There was a problem: %s' % (ex))
-
-        return res.text
         
     # Requests and returns html from a webpage 
     def requestWebpageSelenium(self, url):
