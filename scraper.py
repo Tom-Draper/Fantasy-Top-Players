@@ -2,9 +2,7 @@
 
 import sys
 from bs4 import BeautifulSoup
-import time
 import re
-import pprint
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -21,8 +19,7 @@ class Scraper:
         options.add_argument('--headless')
         options.add_argument('--disable-gpu')
         driver = webdriver.Chrome("chromedriver.exe", chrome_options=options)
-        driver.get(url)
-        #time.sleep(1)
+        driver.get()
         page = driver.page_source
         driver.quit()
 
@@ -37,7 +34,6 @@ class Scraper:
         
         table = soup.find('table')
         user_teams = table.find_all('a', {'class', "Link-a4a9pd-1 jwJFdW"})
-        
         user_teams = user_teams[:self.n_of_accounts]
         
         team_urls = []
