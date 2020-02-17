@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 import re
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+import pandas as pd
 
 class Scraper:
     
@@ -34,9 +35,9 @@ class Scraper:
         print("Top " + str(n) + " accounts")
         
         users_webpage = self.requestWebpageSelenium('http://fantasy.premierleague.com/leagues/314/standings/c')
-        soup = BeautifulSoup(users_webpage, 'html.parser')
+        users_soup = BeautifulSoup(users_webpage, 'html.parser')
         
-        table = soup.find('table') # Get table of top accounts
+        table = users_soup.find('table') # Get table of top accounts
         user_teams = table.find_all('a', {'class', "Link-a4a9pd-1 jwJFdW"})
         user_teams = user_teams[:self.n]
         
@@ -48,38 +49,41 @@ class Scraper:
             print(team_url)
             team_urls.append(team_url)
             
-        players_dict = {}
+        players_df = pd.DataFrame(columns=["Score", "Frequency"])
+        players_df.index.name = "Players"
+        
         for team_url in team_urls:
             team_rank = team_urls.index(team_url) + 1
             print("Team: " + str(team_rank))
             
             team_webpage = self.requestWebpageSelenium(team_url)
-            soup2 = BeautifulSoup(team_webpage, 'html.parser')
+            team_soup = BeautifulSoup(team_webpage, 'html.parser')
             
-            players = soup2.find_all('div', {"class": "PitchElementData__ElementName-sc-1u4y6pr-0 hZsmkV"})
+            players = team_soup.find_all('div', {"class": "PitchElementData__ElementName-sc-1u4y6pr-0 hZsmkV"})
             players = [player.get_text() for player in players]
             
             print(players)
             for player in players:
-                if player not in players_dict:
-                    players_dict[player] = 0
-                players_dict[player] = players_dict[player] + 1
+                if player not in players_df.index:
+                    players_df.loc[player] = [0, 0]  # Create new player row
+                # Update 'relative score' (based on number of teams included) 
+                # using league position of the team player was found in. 
+                # Higher score = better
+                players_df.at[player, 'Score'] += (len(team_urls) - (team_rank - 1))
+                players_df.at[player, 'Frequency'] += 1  # Increment count
                 
-        return players_dict
-    
-    def printer(self, players):
-        for key, value in sorted(players.items(), reverse=True, key=lambda item: item[1]):
-            perc_in_teams = str(round((float(value)/self.n_of_accounts * 100), 2)) + "%"
-            print("%s %s %s" % (key.ljust(20), perc_in_teams.rjust(8), str(value).rjust(3)))
+        
+        return players_df.sort_values('Score', ascending=False)
     
     
 if __name__ == "__main__":
     print(sys.argv)
     if len(sys.argv) > 1:
-        n_of_accounts = int(sys.argv[1])
+        n = int(sys.argv[1])
     else:
-        n_of_accounts = 10
+        n = 35
         
     scraper = Scraper()
-    players = scraper.scrape(n_of_accounts)
-    scraper.printer(players)
+    players = scraper.scrape(n)
+    with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+        print(players)
