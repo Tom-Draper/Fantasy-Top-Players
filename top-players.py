@@ -1,4 +1,6 @@
-# scraper.py - 
+# top-players.py - scrapes the urls of the top n number of fantasy accounts.
+# Retrieves and scrapes the names of each player in those teams.
+# Cacluates and outputs over frequency of players.
 
 import sys
 from bs4 import BeautifulSoup
@@ -9,7 +11,7 @@ from selenium.webdriver.chrome.options import Options
 class Scraper:
     
     def __init__(self):
-        self.n_of_accounts = 0
+        self.n = 0
         
     # Requests and returns html from a webpage 
     def requestWebpageSelenium(self, url):
@@ -25,9 +27,9 @@ class Scraper:
 
         return page
 
-    def scrape(self, n_of_accounts):
-        self.n_of_accounts = n_of_accounts
-        print("Top " + n_of_accounts + " accounts")
+    def scrape(self, n):
+        self.n = n
+        print("Top " + n + " accounts")
         
         webpage = self.requestWebpageSelenium('http://fantasy.premierleague.com/leagues/314/standings/c')
         soup = BeautifulSoup(webpage, 'html.parser')
@@ -66,12 +68,13 @@ class Scraper:
     
     
     
-print(sys.argv)
-if len(sys.argv) > 1:
-    n_of_accounts = int(sys.argv[1])
-else:
-    n_of_accounts = 10
-    
-scraper = Scraper()
-players = scraper.scrape(n_of_accounts)
-scraper.printer(players)
+if __name__ == "__main__":
+    print(sys.argv)
+    if len(sys.argv) > 1:
+        n_of_accounts = int(sys.argv[1])
+    else:
+        n_of_accounts = 10
+        
+    scraper = Scraper()
+    players = scraper.scrape(n_of_accounts)
+    scraper.printer(players)
