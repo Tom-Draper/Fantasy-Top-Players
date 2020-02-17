@@ -13,30 +13,32 @@ class Scraper:
     def __init__(self):
         self.n = 0
         
-    # Requests and returns html from a webpage 
     def requestWebpageSelenium(self, url):
+        """Requests and returns html from a webpage"""
         print('Requesting webpage...')
 
         options = Options()
         options.add_argument('--headless')
         options.add_argument('--disable-gpu')
-        driver = webdriver.Chrome("chromedriver.exe", chrome_options=options)
-        driver.get()
+        driver = webdriver.Chrome(chrome_options=options)
+        driver.get(url)
         page = driver.page_source
         driver.quit()
 
         return page
 
     def scrape(self, n):
+        """Scrapes and counts the players used in the top n fantasy accounts and
+        returns the frequency of each player"""
         self.n = n
-        print("Top " + n + " accounts")
+        print("Top " + str(n) + " accounts")
         
         webpage = self.requestWebpageSelenium('http://fantasy.premierleague.com/leagues/314/standings/c')
         soup = BeautifulSoup(webpage, 'html.parser')
         
-        table = soup.find('table')
+        table = soup.find('table') # Get table of top accounts
         user_teams = table.find_all('a', {'class', "Link-a4a9pd-1 jwJFdW"})
-        user_teams = user_teams[:self.n_of_accounts]
+        user_teams = user_teams[:self.n]
         
         team_urls = []
         regex = re.compile(r'''/entry/\d+/event/\d+''')
@@ -48,7 +50,7 @@ class Scraper:
             
         players_dict = {}
         for team_url in team_urls:
-            print("Team: " + team_urls.index(team_url) + 1)
+            print("Team: " + str(team_urls.index(team_url) + 1))
             webpage2 = self.requestWebpageSelenium(team_url)
             soup2 = BeautifulSoup(webpage2, 'html.parser')
             players = soup2.find_all('div', {"class": "PitchElementData__ElementName-sc-1u4y6pr-0 hZsmkV"})
