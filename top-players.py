@@ -33,8 +33,8 @@ class Scraper:
         self.n = n
         print("Top " + str(n) + " accounts")
         
-        webpage = self.requestWebpageSelenium('http://fantasy.premierleague.com/leagues/314/standings/c')
-        soup = BeautifulSoup(webpage, 'html.parser')
+        users_webpage = self.requestWebpageSelenium('http://fantasy.premierleague.com/leagues/314/standings/c')
+        soup = BeautifulSoup(users_webpage, 'html.parser')
         
         table = soup.find('table') # Get table of top accounts
         user_teams = table.find_all('a', {'class', "Link-a4a9pd-1 jwJFdW"})
@@ -50,11 +50,15 @@ class Scraper:
             
         players_dict = {}
         for team_url in team_urls:
-            print("Team: " + str(team_urls.index(team_url) + 1))
-            webpage2 = self.requestWebpageSelenium(team_url)
-            soup2 = BeautifulSoup(webpage2, 'html.parser')
+            team_rank = team_urls.index(team_url) + 1
+            print("Team: " + str(team_rank))
+            
+            team_webpage = self.requestWebpageSelenium(team_url)
+            soup2 = BeautifulSoup(team_webpage, 'html.parser')
+            
             players = soup2.find_all('div', {"class": "PitchElementData__ElementName-sc-1u4y6pr-0 hZsmkV"})
             players = [player.get_text() for player in players]
+            
             print(players)
             for player in players:
                 if player not in players_dict:
@@ -67,7 +71,6 @@ class Scraper:
         for key, value in sorted(players.items(), reverse=True, key=lambda item: item[1]):
             perc_in_teams = str(round((float(value)/self.n_of_accounts * 100), 2)) + "%"
             print("%s %s %s" % (key.ljust(20), perc_in_teams.rjust(8), str(value).rjust(3)))
-    
     
     
 if __name__ == "__main__":
