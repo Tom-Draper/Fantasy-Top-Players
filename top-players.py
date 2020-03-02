@@ -32,7 +32,7 @@ class Scraper:
         """Scrapes and counts the players used in the top n fantasy accounts and
         returns the frequency of each player"""
         self.n = n
-        print("Top " + str(n) + " accounts")
+        print(f"Top {str(n)} accounts")
         
         users_webpage = self.requestWebpageSelenium('http://fantasy.premierleague.com/leagues/314/standings/c')
         users_soup = BeautifulSoup(users_webpage, 'html.parser')
@@ -48,6 +48,7 @@ class Scraper:
             team_url = "https://fantasy.premierleague.com/" + team_url
             print(f"{user_teams.index(team)}: {team_url}")
             team_urls.append(team_url)
+        print()
             
         players_df = pd.DataFrame(columns=["Score", "Frequency"])
         players_df.index.name = "Players"
@@ -61,8 +62,8 @@ class Scraper:
             
             players = team_soup.find_all('div', {"class": "PitchElementData__ElementName-sc-1u4y6pr-0 hZsmkV"})
             players = [player.get_text() for player in players]
+            print(players, "\n")
             
-            print(players)
             for player in players:
                 if player not in players_df.index:
                     players_df.loc[player] = [0, 0]  # Create new player row
