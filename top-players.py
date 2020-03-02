@@ -66,8 +66,8 @@ class Scraper:
             for player in players:
                 if player not in players_df.index:
                     players_df.loc[player] = [0, 0]  # Create new player row
-                # Update 'relative score' (based on number of teams included) 
-                # using league position of the team player was found in. 
+                # Update 'relative score' (capped by number of teams included) 
+                # using league position of the team the player was found in. 
                 # Higher score = better
                 players_df.at[player, 'Score'] += (len(team_urls) - (team_rank - 1))
                 players_df.at[player, 'Frequency'] += 1  # Increment count
@@ -77,7 +77,6 @@ class Scraper:
     
     
 if __name__ == "__main__":
-    print(sys.argv)
     if len(sys.argv) > 1:
         n = int(sys.argv[1])
     else:
