@@ -21,7 +21,7 @@ class Scraper:
         options = Options()
         options.add_argument('--headless')
         options.add_argument('--disable-gpu')
-        driver = webdriver.Chrome(chrome_options=options)
+        driver = webdriver.Chrome(options=options)
         driver.get(url)
         page = driver.page_source
         driver.quit()
@@ -46,7 +46,7 @@ class Scraper:
         for team in user_teams:
             team_url = regex.search(str(team)).group(0)
             team_url = "https://fantasy.premierleague.com/" + team_url
-            print(team_url)
+            print(f"{user_teams.index(team)}: {team_url}")
             team_urls.append(team_url)
             
         players_df = pd.DataFrame(columns=["Score", "Frequency"])
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         n = int(sys.argv[1])
     else:
-        n = 35
+        n = 10
         
     scraper = Scraper()
     players = scraper.scrape(n)
