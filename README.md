@@ -10,6 +10,9 @@ Currently the maximum number of accounts to include is 41. I aim to increase thi
 ## Getting Started
 Run scraper.py followed by the number of top accounts you wish to include (e.g. "python scraper.py 10" will return frequency of premier league players found in the current top 10 fantasy accounts globally).
 
+Ensure that your chrome driver is the same version as your installed Chrome browser.
+The default path is "C:\Program Files\ChromeDriver\chromedriver.exe" (Windows)
+
 ### Prerequisites
 Required Python modules:
 - Beautiful soup (bs4)
