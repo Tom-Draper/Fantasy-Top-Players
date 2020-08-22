@@ -3,7 +3,7 @@ A python script to retrieve and calculate the frequency of premier league player
 
 As the official Fantasy website uses a large amount of JavaScript, web scraping required using the Selenium web driver. This means the program takes a while to run as many webpages are fetched, especially when retriving the top 15+ teams. It seems each additional user accounts team adds an extra ~3 seconds to runtime. I aim to improve the efficiency of this implementation in future.
 
-Currently the maximum number of accounts to include is 41. I also aim to address this in future.
+Currently the maximum number of accounts to include is 41. I aim to increase this in future.
 
 -------------------------------------------------------
 
